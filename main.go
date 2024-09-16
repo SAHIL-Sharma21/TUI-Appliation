@@ -79,32 +79,30 @@ func (m models) View() string {
 		}
 		var selectedItems []string
 		for i := range m.selected {
-			selectedItems = append(selectedItems, m.choices[i])
+			selectedItems = append(selectedItems, color.YellowString(m.choices[i]))
 		}
 		return fmt.Sprintf("Selected Courses:\n%s\n(Press b to go back, Press q to Quit)", strings.Join(selectedItems, "\n"))
 	}
 
 	s := "Which course should I take?\n\n"
 
-	color.Set(color.FgMagenta)
-	s += fmt.Sprintf("%s\n", m.choices[m.cursor])
-
 	for i, choice := range m.choices {
 		cursor := " " //no cursor
 
 		if m.cursor == i {
-			cursor = ">"
+			cursor = color.MagentaString(">")
 		}
 
 		//choice is seleted
 		checked := " "
 		if _, ok := m.selected[i]; ok {
-			checked = "X"
+			checked = color.CyanString("X")
 		}
 
 		//render the row
-		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
+		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, color.MagentaString(choice))
 	}
+
 	s += "\n(Press p to print selected courses)"
 	s += "\n(Press q to quit)"
 	return s
