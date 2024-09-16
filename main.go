@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-
 	"os"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
@@ -14,12 +14,14 @@ type models struct {
 	choices  []string         //list of items
 	cursor   int              //selecting the items
 	selected map[int]struct{} //seleted items
+	printing bool             //print the view
 }
 
 func initialModel() models {
 	return models{
 		choices:  []string{"Golang Bootcamp", "MERN Bootcamp", "System Design", "Devops Bootcamp", "DSA + interview Prep"},
 		selected: make(map[int]struct{}),
+		printing: false,
 	}
 }
 
@@ -52,6 +54,9 @@ func (m models) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.selected[m.cursor] = struct{}{}
 			}
+
+		case "p":
+			m.printing = true
 		}
 	}
 
@@ -59,6 +64,18 @@ func (m models) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m models) View() string {
+
+	if m.printing {
+		if len(m.selected) == 0 {
+			return "No courses is selected.\n(Press q to Quit)"
+		}
+		var selectedItems []string
+		for i := range m.selected {
+			selectedItems = append(selectedItems, m.choices[i])
+		}
+		return fmt.Sprintf("Selected Courses:\n%s\n(Press q to Quit)", strings.Join(selectedItems, "\n"))
+	}
+
 	s := "Which course should I take?\n\n"
 
 	color.Set(color.FgMagenta)
@@ -80,6 +97,7 @@ func (m models) View() string {
 		//render the row
 		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
 	}
+	s += "\n(Press p to print selected courses)"
 	s += "\n(Press q to quit)"
 	return s
 }
