@@ -56,7 +56,15 @@ func (m models) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "p":
-			m.printing = true
+			if !m.printing {
+				m.printing = true
+			}
+
+		case "b":
+			if m.printing {
+				m.printing = false
+			}
+
 		}
 	}
 
@@ -73,7 +81,7 @@ func (m models) View() string {
 		for i := range m.selected {
 			selectedItems = append(selectedItems, m.choices[i])
 		}
-		return fmt.Sprintf("Selected Courses:\n%s\n(Press q to Quit)", strings.Join(selectedItems, "\n"))
+		return fmt.Sprintf("Selected Courses:\n%s\n(Press b to go back, Press q to Quit)", strings.Join(selectedItems, "\n"))
 	}
 
 	s := "Which course should I take?\n\n"
